@@ -1,0 +1,124 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.monkey.entonado.MainActivity">
+
+    <LinearLayout
+        	android:layout_height="0dp"
+        	android:layout_weight="2"
+	        android:layout_width="match_parent"
+	        android:orientation="horizontal"
+	        android:paddingBottom="@dimen/activity_vertical_margin"
+	        android:baselineAligned="false">
+    
+	    <LinearLayout 
+	        android:layout_weight="2"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:orientation="vertical">
+	
+	        <TextView
+	            android:id="@+id/btnBuscar"
+	            android:layout_width="fill_parent" 
+	    		android:layout_height="0dp" 
+	    		android:layout_weight="1"
+	            android:background="@color/RED"
+	            android:textAlignment="gravity"
+	            android:text="Buscar"
+	            android:textSize="25dp"
+	            android:textStyle="bold"
+	            android:gravity="center"
+	            android:textColor="@android:color/white"
+				android:clickable="true"/>
+	
+	        <TextView
+	            android:id="@+id/textView2"
+	            android:layout_width="fill_parent" 
+	    		android:layout_height="0dp" 
+	    		android:layout_weight="1"
+	            android:background="@color/BLUE_BRIGHT"  />
+	        
+	    </LinearLayout>
+	    
+	    <LinearLayout 
+	        android:layout_weight="3"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:orientation="vertical">
+	
+	        <TextView
+	            android:id="@+id/textView3"
+	            android:layout_width="fill_parent" 
+	    		android:layout_height="0dp" 
+	    		android:layout_weight="1"
+	            android:background="@color/YELLOW"  />
+	
+	        <EditText
+	            android:inputType="textMultiLine|textAutoCorrect"
+	            android:id="@+id/campoBusqueda"
+	            android:layout_width="fill_parent" 
+	    		android:layout_height="0dp" 
+	    		android:layout_weight="1"
+	            android:background="@android:color/darker_gray" 
+	            android:textColor="@android:color/white"
+	            android:hint="busca una canción"
+	            android:textAlignment="center"
+	            android:maxLines="4"
+	            android:scrollHorizontally="false"
+	            android:gravity="center"
+	            android:paddingLeft="@dimen/editText_horizontal_margin"
+   				android:paddingRight="@dimen/editText_horizontal_margin"
+	    		/>
+	        
+	         <TextView
+	            android:id="@+id/txtBusqueda"
+	            android:layout_width="fill_parent" 
+	    		android:layout_height="0dp" 
+	    		android:layout_weight="1"
+	            android:background="@color/GREEN" 
+	            android:gravity="center"
+	    		android:textColor="@android:color/white"
+	    		android:textAlignment="gravity"
+	            android:text="Por Titulo"
+	            android:textSize="25dp"/>
+	        
+	    </LinearLayout>
+	    
+	    
+	</LinearLayout>
+	
+    <LinearLayout
+        android:background="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+	
+    <Button
+        android:id="@+id/btnTitulo"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:text="por Titulo"
+        android:textColor="@color/BLUE_BRIGHT"
+        android:textAlignment="center"
+        android:background="@android:color/white"
+         />
+    
+    <Button
+        android:id="@+id/btnArtista"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:text="por Artista"
+        android:textColor="@color/BLUE_BRIGHT"
+        android:textAlignment="center"
+        android:background="@android:color/white"
+         />
+    </LinearLayout>
+	   
+</LinearLayout>

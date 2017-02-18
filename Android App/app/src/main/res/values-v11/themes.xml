@@ -1,0 +1,17 @@
+<resources>
+    <style name="CustomActionBarTheme"
+           parent="@style/Theme.AppCompat.Light">
+        <!-- item name="android:actionBarStyle">@style/MyActionBar item-->
+    </style>
+
+    <!--
+        Base application theme for API 11+. This theme completely replaces
+        AppBaseTheme from res/values/styles.xml on API 11+ devices.
+    -->
+    <style name="AppBaseTheme" parent="@android:style/Widget.ActionBar">
+        <!-- API 11 theme customizations can go here. -->
+        <item name="android:background">@color/BLUE_BRIGHT</item>
+        <item name="android:icon">@android:color/transparent</item> 
+    </style>
+
+</resources>
