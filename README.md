@@ -1,7 +1,5 @@
-# RockolApp
-
+# RockolApp 
 ![icono](Rockolapp_md.png)
-
 Reproduce música de archivos locales o de soundcloud. Acompañado de una aplicación móvil de la cual se puede escoger una lista de reproducción para que suene en la aplicación de escritorio. Pueden haber varias personas conectadas a la vez
 
 Reproduces local music files or sounds from soundcloud. Works along with a mobile app from where a user can choose a playlist to play on the desktop app. Multiple people can be connected at the same time
