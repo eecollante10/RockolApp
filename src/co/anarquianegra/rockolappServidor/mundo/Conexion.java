@@ -1,3 +1,18 @@
+// RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+//     Copyright (C) 2016  Edgard Collante
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU Affero General Public License as published
+//     by the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU Affero General Public License for more details.
+//
+//     You should have received a copy of the GNU Affero General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package co.anarquianegra.rockolappServidor.mundo;
 
 
@@ -22,76 +37,76 @@ public class Conexion extends Thread
 	//----------------------------------------
 	//Constantes
 	//----------------------------------------
-	
+
 	public final static String INFO_USUARIO = "informacion usuario";
-	
+
 	public final static String BUSCAR_POR_NOMBRE = "buscar por nombre";
-	
+
 	public final static String BUSCAR_POR_ARTISTA = "buscar por artista";
-	
+
 	public final static String AGREGAR_CANCION = "agregar cancion";
-	
+
 	public final static String AGREGAR_LISTA = "agregar lista";
 
 	//----------------------------------------
 	//Atributos
 	//----------------------------------------
-	
+
 	/**
 	 * Socket del usuario
 	 */
 	private Socket canal;
-	
+
 	/**
 	 * Indica si la lista de reproduccion escogida por el usuario
 	 * ha sido agregada a la lista de reproduccion grande
 	 */
 	private boolean listaAgregada;
-	
+
 	/**
 	 * Informacion del usuario
 	 */
 	private String infoUsuario;
-	
+
 	/**
 	 * Arreglo de canciones a donde el usuario puede agregar canciones
 	 */
 	private Stack canciones;
-	
+
 	/**
 	 * La lista de reproduccion principal
 	 */
 	private ListaReproductor lista;
-	
+
 	/**
 	 * Escribe los datos para mandar
 	 */
 	private PrintWriter out;
-	
+
 	/**
 	 * Lee los datos que entran
 	 */
 	private BufferedReader in;
-	
+
 	/**
 	 * Indica si se debe terminar la conexion
 	 */
 	private boolean conexionTerminada;
-	
+
 	/**
 	 * Mensaje recibido
 	 */
 	private String mens;
-	
+
 	/**
 	 * Tiempo en que se agrego la ultima lista
 	 */
 	private long tiempo;
-	
+
 	//----------------------------------------
 	//Constructores
 	//----------------------------------------
-	
+
 	/**
 	 * Constructor de la clase Conexion
 	 * @param c
@@ -104,19 +119,19 @@ public class Conexion extends Thread
 		conexionTerminada = false;
 		infoUsuario = "";
 		canciones = new Stack();
-		
+
 		tiempo = -1;
-		
+
 		out = new PrintWriter( canal.getOutputStream( ), true );
         in = new BufferedReader( new InputStreamReader( canal.getInputStream( ) ) );
-        
+
 		mens = "Ningun mensaje";
 	}
-	
+
 	//----------------------------------------
 	//Metodos
 	//----------------------------------------
-	
+
 	/**
 	 * Dice si el usuario ya envio la informacion de las canciones
 	 * @return listaAgregada
@@ -125,7 +140,7 @@ public class Conexion extends Thread
 	{
 		return conexionTerminada;
 	}
-	
+
 	/**
 	 * Devuelve la informacion del usuario
 	 * @return infoUsuario
@@ -134,7 +149,7 @@ public class Conexion extends Thread
 	{
 		return infoUsuario+canal.getInetAddress();
 	}
-	
+
 	/**
 	 * Devuelve el ultimo mensaje recibido
 	 */
@@ -142,7 +157,7 @@ public class Conexion extends Thread
 	{
 		return mens;
 	}
-	
+
 	/**
 	 * Devuelve el tiempo de ultima agregada
 	 * @return tiempo
@@ -151,7 +166,7 @@ public class Conexion extends Thread
 	{
 		return tiempo;
 	}
-	
+
 	/**
 	 * Para la ejecucion de este hilo
 	 */
@@ -167,11 +182,11 @@ public class Conexion extends Thread
 			 e.printStackTrace();
 		 }
 	}
-	
+
 	/**
 	 * Metodo proveniente de la clase thread
 	 * dentro de este se inicia la conexion
-	 * mientras se este ejecutando el usuario todavia 
+	 * mientras se este ejecutando el usuario todavia
 	 * podra mandar su lista de canciones
 	 */
 	public void run()
@@ -190,7 +205,7 @@ public class Conexion extends Thread
         	 conexionTerminada = true;
         	 e.printStackTrace();
         	 System.out.println("Conexion terminada: "+canal.getInetAddress()+" : "+ e.getMessage());
-        	 
+
         	 try
              {
                  in.close( );
@@ -219,7 +234,7 @@ public class Conexion extends Thread
 			 }
 		 }
 	}
-	
+
 	/**
 	 * Inicia la conexion con el usuario
 	 * le manda la informacon necesaria
@@ -231,8 +246,8 @@ public class Conexion extends Thread
 		{
 			String linea = in.readLine();
 			String[] info = linea.split(";");
-			
-			
+
+
 			if(info[0].equals(INFO_USUARIO))
 			{
 				System.out.println(linea);
@@ -242,7 +257,7 @@ public class Conexion extends Thread
 			System.out.println(linea);
 		}
 	}
-	
+
 	/**
 	 * Agrega la lista de canciones que el usuario envio
 	 * a la lista de reproduccion grande
@@ -252,15 +267,15 @@ public class Conexion extends Thread
 		lista.agregarLista(canciones, infoUsuario);
 		listaAgregada = true;
 	}
-	
+
 	//---------------------------------------
 	//Metodos privados
 	//---------------------------------------
-	
+
 	/**
 	 * Procesa cualquier mensaje que provenga del usuario
 	 */
-	private void procesarMensaje() 
+	private void procesarMensaje()
 	{
 			String linea = null;
 			String[] info = null;
@@ -272,8 +287,8 @@ public class Conexion extends Thread
 			{
 				System.out.println("Error al leer linea: "+e.getMessage());
 				conexionTerminada = true;
-			}	
-			
+			}
+
 			if(linea != null)
 			{
 				if(linea.equals("null"))
@@ -307,7 +322,7 @@ public class Conexion extends Thread
 				IListaOrdenada resultado = buscarCancionesPorArtista(info[1]);
 				if(resultado != null)
 				System.out.println("resultados : "+resultado.darLongitud());
-					
+
 				for(int i = 0; resultado != null && i<resultado.darLongitud(); i++)
 				{
 					Cancion c = (Cancion)resultado.dar(i);
@@ -325,7 +340,7 @@ public class Conexion extends Thread
 			}
 			else if(!listaAgregada && info != null && info[0].equals(AGREGAR_LISTA))
 			{
-				agregarLista();	
+				agregarLista();
 				tiempo = System.currentTimeMillis();
 			}
 			else if(listaAgregada && info != null && info[0].equals(AGREGAR_LISTA))
@@ -334,7 +349,7 @@ public class Conexion extends Thread
 				out.println("MENSAJE;Debes esperar un tiempo de 10 minutos despues de tu ultima agregada para volver a agregar canciones a la lista");
 			}
 	}
-	
+
 	/**
 	 * Busca canciones por nombre y las devuelve al metodo
 	 * procesar mensaje que es el que lo invoca
@@ -345,7 +360,7 @@ public class Conexion extends Thread
 	{
 		return lista.buscarCancionesPorNombre(pNombre);
 	}
-	
+
 	/**
 	 * Busca canciones por artista y las devuelve al metodo
 	 * procesar mensaje que es el que lo invoca

@@ -1,3 +1,18 @@
+// RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+//     Copyright (C) 2016  Edgard Collante
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU Affero General Public License as published
+//     by the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU Affero General Public License for more details.
+//
+//     You should have received a copy of the GNU Affero General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package com.monkey.entonado;
 
 import java.io.BufferedReader;
@@ -44,26 +59,26 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	//---------------------------
 	//Constantes
 	//---------------------------
-	
+
 	public final static String INFO_USUARIO = "informacion usuario";
-	
+
 	public final static String BUSCAR_POR_NOMBRE = "buscar por nombre";
-	
+
 	public final static String BUSCAR_POR_ARTISTA = "buscar por artista";
-	
+
 	public final static String AGREGAR_CANCION = "agregar cancion";
-	
+
 	public final static String AGREGAR_LISTA = "agregar lista";
-	
+
 	public final static String EXTRA_CANCIONES = "com.example.entonado.MESSAGE";
-	
+
 	public final static String EXTRA_LISTA = "com.example.entonado.LISTA";
-	
+
 	public final static int RESULT_BOTON =1994;
-	
+
 	public final static String TAG = "Entonado";
-	
-	
+
+
 	//---------------------------
 	//Atributos
 	//---------------------------
@@ -71,94 +86,94 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	 * Boton buscar
 	 */
 	private TextView btnBuscar;
-	
+
 	/**
 	 * Campo busqueda
 	 */
 	private EditText campoBusqueda;
-	
+
 	/**
 	 * Radio boton artista
 	 */
 	private Button radioArtista;
-	
+
 	/**
 	 * Radio boton titulo
 	 */
 	private Button radioTitulo;
-	
+
 	/**
 	 * Texto Que indica el metodo de busaueda
 	 */
 	private TextView busqueda;
-	
+
 	/**
 	 * Socket de este cliente
 	 */
 	private Socket canal;
-	
+
 	/**
 	 * Canal para escribir hacia el servidor
 	 */
 	private PrintWriter out;
-	
+
 	/**
 	 * Canal para recibir del servidor
 	 */
 	private BufferedReader in;
-	
+
 	/**
 	 * Arreglo de canciones resultantes de una busqueda
 	 */
 	private ArrayList canciones;
-	
-	
+
+
 	/**
 	 * Wifi p2p manager
 	 */
 	private WifiP2pManager mManager;
-	
+
 	/**
 	 * Canal para conexion a hardware wifip2p
 	 */
 	private Channel mChannel;
-	
+
 	/**
 	 * Broadcast reciever, recibe informacion de el estado del wifi
 	 */
 	private WiFiDirectBroadCastReceiver mReceiver;
-	
+
 	/**
 	 * Filtro de mensajes del broadcast receiver
 	 */
 	private IntentFilter mIntentFilter;
-	
+
 	/**
 	 * Mensaje de exito de coneccion
 	 */
 	private String mensajeConexion;
-	
+
 	/**
 	 * Indica si se ha intentado conectar
 	 */
 	private boolean intentoConectar;
-	
+
 	/**
 	 * Indica si se ha intentado enviar la lista
 	 */
 	private boolean intentoEnviarLista;
-	
+
 	/**
 	 * Direccion ip del servidor
 	 */
 	private String ip;
-	
+
 	/**
 	 * Canciones añadidas a la lista de reproduccion
 	 */
 	private ArrayList milista;
-	
-	
+
+
 	//---------------------------------
 	//Metodos De la Actividad
 	//---------------------------------
@@ -167,46 +182,46 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	 */
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
-	protected void onCreate(Bundle savedInstanceState) 
+	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
 	    mChannel = mManager.initialize(this, getMainLooper(), null);
 	    mReceiver = new WiFiDirectBroadCastReceiver(mManager, mChannel, this);
-	    
+
 	    mIntentFilter = new IntentFilter();
 	    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
 	    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
 	    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
 	    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-		
+
 		btnBuscar = (TextView)findViewById(R.id.btnBuscar);
 		btnBuscar.setOnClickListener(this);
-		
+
 		radioTitulo = (Button)findViewById(R.id.btnTitulo);
 		radioArtista = (Button)findViewById(R.id.btnArtista);
-		
+
 		campoBusqueda = (EditText)findViewById(R.id.campoBusqueda);
-		
+
 		busqueda = (TextView)findViewById(R.id.txtBusqueda);
-				
+
 			out = null;
 			in = null;
-			
+
 			canciones = new ArrayList();
 			milista = new ArrayList();
-			
+
 			mensajeConexion = "No se estableció la conexion";
 			intentoConectar = false;
 			ip = "";
 
 	}
-	
+
 	/**
 	 * OnResume
-	 * register the broadcast receiver with the intent values to be matched 
+	 * register the broadcast receiver with the intent values to be matched
 	 */
 	@Override
 	protected void onResume()
@@ -233,12 +248,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	        		if(mensajeConexion == null)
 	        		{
 	        			mensaje = "Estas desconectado";
-	        				
+
 	        		}
 	        		else if(mensajeConexion.equals("desconectado"))
 	        		{
 	        			mensaje = "Estas desconectado";
-	        				
+
 	        		}
 	        		else if(mensajeConexion.equals("¡Estas conectado!"))
 	        		{
@@ -247,7 +262,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	        			PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this, 0, in, PendingIntent.FLAG_ONE_SHOT);
 	        			entro = true;
 	        			System.out.println("puso alarma");
-	        			
+
 	        			AlarmManager am = (AlarmManager)MainActivity.this.getSystemService(Context.ALARM_SERVICE);
 	        			am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000*60, pi);
 	        		}
@@ -262,13 +277,13 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	        }
 	     }.start();
 	}
-	
+
 	/**
 	 *OnPause
-	 * unregister the broadcast receiver 
+	 * unregister the broadcast receiver
 	 */
 	@Override
-	protected void onPause() 
+	protected void onPause()
 	{
 	    super.onPause();
 	    unregisterReceiver(mReceiver);
@@ -278,7 +293,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-				
+
 		getMenuInflater().inflate(R.menu.main, menu);
 		menu.getItem(0).setOnMenuItemClickListener(this);
 		return true;
@@ -290,39 +305,39 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) 
+		if (id == R.id.action_settings)
 		{
 			Intent intent = new Intent(this, MiLista.class);
 			intent.putParcelableArrayListExtra(EXTRA_LISTA, milista);
 			startActivityForResult(intent, 999);
 			intentoEnviarLista = false;
 			return true;
-			
+
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	/**
 	 * Recibe el resultado de intentar escanear un codigo QR
 	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) 
-	{           
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
 	    super.onActivityResult(requestCode, resultCode, data);
-	    if (requestCode == 0) 
+	    if (requestCode == 0)
 	    {
-	        if (resultCode == RESULT_OK) 
+	        if (resultCode == RESULT_OK)
 	        {
 	            ip = data.getStringExtra("SCAN_RESULT");
-	            
+
 	            Conectar conectar = new Conectar(this);
 	            conectar.start();
-	            
-	          
+
+
 	        }
 	        else if(resultCode == RESULT_CANCELED)
 	        {
-	            
+
 	           if( canal == null )
 	           {
 	        	   mensajeConexion = "No te conectaste";
@@ -332,28 +347,28 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	    }
 	    else if(requestCode == 999)
 	    {
-	    	if (resultCode == RESULT_OK) 
+	    	if (resultCode == RESULT_OK)
 	        {
-	            milista = data.getParcelableArrayListExtra("LISTA_ACTUALIZADA");   
+	            milista = data.getParcelableArrayListExtra("LISTA_ACTUALIZADA");
 	        }
 	    	else if(resultCode == RESULT_BOTON)
 	    	{
 	    		milista = data.getParcelableArrayListExtra("LISTA_ACTUALIZADA");
-	    		
+
 	    		if(canal != null && canal.isConnected() && mensajeConexion != null && !mensajeConexion.equals("desconectado"))
 	    		{
 	    			ThreadEnviarLista enviar = new ThreadEnviarLista(this);
 	    			enviar.start();
-	    			
+
 	    			while(enviar.isAlive())
 	    			{
-	    				
+
 	    			}
 	    			mostrarMensaje(mensajeConexion);
 	    		}
-	    		
+
 	    		intentoEnviarLista = true;
-	    		
+
 	    	}
 	    	else if(resultCode == RESULT_CANCELED)
 	        {
@@ -368,14 +383,14 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	 * y Buscar
 	 */
 	@Override
-	public void onClick(View v) 
+	public void onClick(View v)
 	{
 		canciones = new ArrayList();
-		
+
 		if(v.getId() == R.id.btnBuscar)
 		{
 			String mensaje = campoBusqueda.getText().toString();
-			
+
 			if(mensaje == null || mensaje.equals(""))
 			{
 				AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
@@ -390,7 +405,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 
 	            AlertDialog alert11 = builder1.create();
 	            alert11.show();
-	            
+
 			}
 			else if(radioTitulo.getText().equals("por Titulo") || radioArtista.getText().equals("por Artista"))
 			{
@@ -398,15 +413,15 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 				{
 					ConsultarCanciones consultar = new ConsultarCanciones(this);
 					consultar.start();
-					
+
 					ThreadRecibir recibir = new ThreadRecibir(this);
 					recibir.start();
-					
+
 					while(recibir.isAlive())
 					{
-						
+
 					}
-					
+
 					if(!recibir.darMensaje().equals(""))
 						mostrarMensaje(recibir.darMensaje());
 				}
@@ -426,10 +441,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 		            alert11.show();
 				}
 			}
-			
+
 		}
 	}
-	
+
 	//-----------------------------
 	//Metodos De Conexion
 	//-----------------------------
@@ -438,10 +453,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	 * Establece el estado de la coneccion wifi
 	 * @param b
 	 */
-	public void setIsWifiP2pEnabled(boolean b) 
+	public void setIsWifiP2pEnabled(boolean b)
 	{
 		String mensaje = "";
-		
+
 		if(b)
 			mensaje = "Conexion WiFi: Disponible";
 		else
@@ -457,12 +472,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	                dialog.cancel();
 	            }
 	        });
-	
+
 	        AlertDialog alert11 = builder1.create();
 	        alert11.show();
 		}
 	}
-	
+
 	/**
 	 * Realiza la conexion al servidor
 	 * @return mensaje Indica si la conexion fue exitosa
@@ -471,7 +486,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	public String conectar()
 	{
 		intentoConectar = true;
-		try 
+		try
         {
         	System.out.println("Conectado en 4 ");
         	canal = new Socket( );
@@ -486,22 +501,22 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
             System.out.println("Conectado en 1");
             out = new PrintWriter(canal.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(canal.getInputStream()));
-            
+
             String info ="";
-            
+
             AccountManager aManager = AccountManager.get(this);
             Account[] accounts = aManager.getAccountsByType("com.google");
-             
+
             for (Account account : accounts)
             {
                 String accountId = account.name;
                 info+=accountId+" : ";
             }
-            
+
             out.println(INFO_USUARIO+";"+"U:"+info);
-            
+
             String mens = in.readLine();
-            
+
             System.out.println("Estas conectado! "+mens+" : "+canal.getInetAddress());
             mensajeConexion = "¡Estas conectado!";
             return "¡Estas Conectado!";
@@ -512,14 +527,14 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
         	mensajeConexion = "No se estableció la conexión: "+e.getMessage();
         	return "No se establecio la conexión";
 		}
-        catch (Exception e) 
+        catch (Exception e)
         {
         	System.out.println("No se establecio la conexion");
         	mensajeConexion = "No se estableció la conexión: "+ e.getMessage();
         	return "No se establecio la conexión";
-        }   
+        }
 	}
-	
+
 	/**
 	 * Manda mensaje al servidor para pedir canciones
 	 * @return
@@ -537,7 +552,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 			System.out.println(BUSCAR_POR_NOMBRE+" - pidiendo canciones");
 		}
 	}
-	
+
 	/**
 	 * Recibe la informacion del servidor con las canciones
 	 * o cualcquier informacion	`
@@ -556,17 +571,17 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 				mensajeRecibir = mensajeConexion;
 			}
 			System.out.println("-----"+linea+"-----");
-			
+
 			int i = 0;
 			while(linea != null && !linea.equals("TERMINO"))
 			{
 				i++;
 				System.out.println(linea);
-				
+
 				if(linea.split(";").length>1)
 				{
 					String[] lineaSp = linea.split(";");
-					
+
 					if(lineaSp[0].equals(AGREGAR_CANCION))
 					{
 						String[] infoCancion = lineaSp[1].split(" : ");
@@ -580,12 +595,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 						System.out.println("mensaje no == AGREGAR_CANCION");
 					}
 				}
-				
+
 				System.out.println("No entro AGREGAR");
 				linea = in.readLine();
 			}
 			System.out.println("linae al final es: "+linea);
-			
+
 			Intent intent = new Intent(this, Resultados.class);
 			intent.putParcelableArrayListExtra(EXTRA_CANCIONES, canciones);
 			intent.putParcelableArrayListExtra(EXTRA_LISTA, milista);
@@ -608,7 +623,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 		}
 		return mensajeRecibir;
 	}
-	
+
 	/**
 	 * Envia las canciones de la lista al servidor
 	 */
@@ -623,7 +638,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 		if(milista.size()>0)
 			out.println(AGREGAR_LISTA);
 	}
-	
+
 	/**
 	 * Muestra mensaje de resultado de intento de conexion cuando
 	 * se resume la aplicacion
@@ -650,17 +665,17 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 	{
 			if(canal == null || !canal.isConnected() || canal.isClosed() || canal.isInputShutdown() || (mensajeConexion != null && mensajeConexion.equals("desconectado")) || mensajeConexion == null)
 			{
-				try 
+				try
 				{
-	
+
 				    Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 				    intent.putExtra("SCAN_MODE", "QR_CODE_MODE"); // "PRODUCT_MODE for bar codes
-	
+
 				    startActivityForResult(intent, 0);
-	
-				} catch (Exception e) 
+
+				} catch (Exception e)
 				{
-	
+
 				    Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
 				    Intent marketIntent = new Intent(Intent.ACTION_VIEW,marketUri);
 				    startActivity(marketIntent);
@@ -677,14 +692,14 @@ public class MainActivity extends ActionBarActivity implements OnClickListener, 
 		                dialog.cancel();
 		            }
 		        });
-	
+
 		        AlertDialog alert11 = builder1.create();
 		        alert11.show();
 			}
-			
+
 			return true;
 		}
-	
+
 	//------------------------------------
 	//Metodos Privados
 	//------------------------------------

@@ -1,3 +1,18 @@
+// RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+//     Copyright (C) 2016  Edgard Collante
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU Affero General Public License as published
+//     by the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU Affero General Public License for more details.
+//
+//     You should have received a copy of the GNU Affero General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package co.anarquianegra.rockolappServidor.mundo;
 
 import java.io.IOException;
@@ -20,38 +35,38 @@ public class Servidor extends Thread
 	//---------------------------------------
 	//Atributos
 	//---------------------------------------
-	
+
 	/**
 	 * Coleccion de conexiones
 	 */
 	protected Collection conexiones;
-	
+
 	/**
 	 * El numero puerto por donde va a recibir conexiones
 	 */
 	private int puerto;
-	
+
 	/**
 	 * Socket receptor de las conexiones
 	 */
 	private ServerSocket receptor;
-	
+
 	/**
 	 * La lista de reproduccion principal
 	 */
 	private ListaReproductor lista;
-	
+
 	/**
 	 * Permite cerrar terminar la ejecucion del hili voliendo esta variable falsa
 	 */
 	private boolean abierto;
-	
 
-	
+
+
 	//---------------------------------------
 	//Constructor
 	//---------------------------------------
-	
+
 	/**
 	 * Constructor de la clase servidor
 	 * @param p el puerto por donde va a recibir conexiones
@@ -65,11 +80,11 @@ public class Servidor extends Thread
 		abierto = true;
 		conexiones = new Vector();
 	}
-	
+
 	//--------------------------------------
 	//Metodos
 	//--------------------------------------
-	
+
 	/**
 	 * Devuelve las conexiones en proceso
 	 * @return coleccion de conexiones en proceso
@@ -89,7 +104,7 @@ public class Servidor extends Thread
 
         return conexionesEnProceso;
 	}
-	
+
 	/**
 	 * Devuelve todas las conexiones desde que se inicio el programa
 	 * @return coleccion de conexiones
@@ -98,14 +113,14 @@ public class Servidor extends Thread
 	{
 		return conexiones;
 	}
-	
+
 	/**
 	 * Termina de ejecutar el hilo
 	 */
 	public void parar()
 	{
 		abierto = false;
-		
+
 		Iterator iter = conexiones.iterator();
 		int  i = 0;
 		while(iter.hasNext())
@@ -128,7 +143,7 @@ public class Servidor extends Thread
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Guarda la informacion de los usuarios
 	 * @return true si guardo exitosamente
@@ -138,7 +153,7 @@ public class Servidor extends Thread
 		//@TODO
 		return false;
 	}
-	
+
 	/**
 	 * Recibe las conexiones y las conecta
 	 */
@@ -148,14 +163,14 @@ public class Servidor extends Thread
         {
             receptor = new ServerSocket( puerto );
             System.out.println("servidor sirviendo");
-            
+
             while( abierto )
             {
-            	 
+
                 // Esperar una nueva conexi�n
                 Socket socketNuevoCliente = receptor.accept( );
 
-               
+
                 // Intentar iniciar una conexion con el nuevo cliente
                 crearConexion( socketNuevoCliente );
             }
@@ -180,7 +195,7 @@ public class Servidor extends Thread
 	        }
 	    }
 	}
-	
+
 	/**
 	 * Metodo de la clase thread
 	 */
@@ -188,7 +203,7 @@ public class Servidor extends Thread
 	{
 		recibirConexiones();
 	}
-	
+
 	/**
 	 * Inicia la conexion con el usuario
 	 * @param s canal al nuevo usuario
@@ -202,7 +217,7 @@ public class Servidor extends Thread
             System.out.println("InfoSocket: "+s);
             conexiones.add(nueva);
             nueva.start();
-            
+
             synchronized (this)
             {
 				try
@@ -226,7 +241,7 @@ public class Servidor extends Thread
             {
                 e.printStackTrace( );
             }
-            
+
             // Mostrar la excepci�n original
             e.printStackTrace( );
         }

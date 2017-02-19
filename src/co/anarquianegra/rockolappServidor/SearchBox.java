@@ -1,3 +1,18 @@
+// RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+//     Copyright (C) 2016  Edgard Collante
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU Affero General Public License as published
+//     by the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU Affero General Public License for more details.
+//
+//     You should have received a copy of the GNU Affero General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package co.anarquianegra.rockolappServidor;
 
 import javafx.beans.value.ChangeListener;
@@ -9,9 +24,9 @@ import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
 
-public class SearchBox extends Region 
+public class SearchBox extends Region
 {
-	 
+
     private TextField textBox;
     private Button clearButton;
 
@@ -26,7 +41,7 @@ public class SearchBox extends Region
         clearButton = new Button();
         clearButton.setVisible(false);
         getChildren().addAll(textBox, clearButton);
-        clearButton.setOnAction(new EventHandler<ActionEvent>() {                
+        clearButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent actionEvent) {
                 textBox.setText("");
                 textBox.requestFocus();
@@ -38,7 +53,7 @@ public class SearchBox extends Region
             }
         });
     }
-    
+
     public TextField darTextField()
     {
     	return textBox;

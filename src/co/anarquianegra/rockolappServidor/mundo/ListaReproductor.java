@@ -1,3 +1,18 @@
+// RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+//     Copyright (C) 2016  Edgard Collante
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU Affero General Public License as published
+//     by the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU Affero General Public License for more details.
+//
+//     You should have received a copy of the GNU Affero General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package co.anarquianegra.rockolappServidor.mundo;
 
 import java.io.File;
@@ -61,76 +76,76 @@ public class ListaReproductor
 	//---------------------------------------
 	//Constantes
 	//---------------------------------------
-	
+
 	public final static String client_secret = "bc408523039a6c6f8ebfefb650692620";
-	
+
 	public final static String client_id = "0a679292c57922b30c2bd1d475f8063a";
 
 	//---------------------------------------
 	//Atributos
 	//---------------------------------------
-	
+
 	/**
-	 * Devuelve un numreo con la cantidad de conexiones 
+	 * Devuelve un numreo con la cantidad de conexiones
 	 * que pudieron agregar canciones a la lista
 	 */
 	private int cantidadConexionesPositivas;
-	
+
 	/**
 	 * Tabla hashing de canciones que tienen como llave el nombre
 	 */
 	private ITablaHashing<String, Cancion> cancionesXnombre;
-	
+
 	/**
 	 * Tabla hashing de canciones que tienen como llave el artista
 	 */
 	private ITablaHashing<String, Cancion> cancionesXartista;
-	
+
 	/**
 	 * Tabla hashing de canciones que tienen como llave el id
 	 */
 	private ITablaHashing<String, Cancion> cancionesXid;
-	
+
 	/**
 	 * Lista de las canciones en la lista de reproduccion
 	 */
 	private SimpleListProperty<Cancion> listaReproduccion;
-	
+
 	/**
 	 * Capacidad preferible de las tablas de hashing
 	 */
 	private int capacidad;
-	
+
 	/**
 	 * Dice la cantidad de canciones
 	 */
 	private int cant;
-	
+
 	/**
 	 * Archivo de propiedades con las rutas de las carpetas
 	 * y canciones a cargar
 	 */
 	private Properties rutasCanciones;
-	
+
 	/**
 	 * Reproductor de audio
 	 */
 	private MediaPlayer mediaPlayer;
-	
+
 	/**
 	 * Sonidos a ser reproducidos por el mediaPlayer
 	 */
 	private Media media;
-	
+
 	/**
 	 * Si prendido indica que las canciones se deben reproducir
 	 */
 	private boolean playing;
-	
+
 	//---------------------------------------------
 	//Constructor
 	//---------------------------------------------
-	
+
 	/**
 	 * Constructor de la clase ListaReproductor
 	 */
@@ -143,26 +158,26 @@ public class ListaReproductor
 		rutasCanciones = new Properties();
 		cant = 0;
 	}
-	
+
 	//-------------------------------------------
 	//Metodos
 	//-------------------------------------------
-	
+
 	/**
 	 * Agrega una cancion a la carpeta de canciones de la aplicacion
 	 * @param arch el archivo de la cancion
 	 * @throws IOException
-	 * @throws SAXException 
-	 * @throws TikaException 
+	 * @throws SAXException
+	 * @throws TikaException
 	 */
 	public void agregarCancion(File arch) throws IOException, SAXException, TikaException
 	{
 		try
 		{
-			extraerCanciones(arch);	
+			extraerCanciones(arch);
 			rutasCanciones.setProperty(arch.getName(), arch.getCanonicalPath());
 		}
-		catch (FileNotFoundException e) 
+		catch (FileNotFoundException e)
 		{
 			throw new FileNotFoundException("No se agregó la cancion: (FileNotFound) \n"+e.getMessage());
 		}
@@ -173,12 +188,12 @@ public class ListaReproductor
 		catch (SAXException e)
 		{
 			throw new SAXException("No se agregó la cancion: (SAX) \n"+e.getMessage());
-		} 
+		}
 		catch (TikaException e)
 		{
 			throw new TikaException("No se agregó la cancion: (Tika) \n"+e.getMessage());
-		} 
-		
+		}
+
 	}
 
 	/**
@@ -188,7 +203,7 @@ public class ListaReproductor
 	 */
 	public void eliminarCancion(Cancion c) throws IOException
 	{
-		
+
 		File arch = new File("./data/canciones/"+c.darArchivo());
 		try
 		{
@@ -199,13 +214,13 @@ public class ListaReproductor
 		{
 			throw new IOException("No se eliminó la canción: \n"+e.getMessage());
 		}
-		
+
 		Comparator<Cancion> comparador = new ComparadorCanciones();
 		cancionesXnombre.eliminar(c.darNombre(), c, comparador);
 		cancionesXartista.eliminar(c.darArtista(), c, comparador);
 		cancionesXid.eliminar(c.toString(), c, comparador);
 	}
-	
+
 	/**
 	 * Devuelve la lista de reproduccion
 	 * @return Cancion[] canciones en la lista
@@ -225,17 +240,17 @@ public class ListaReproductor
 	{
 		ComparadorBusquedas comparador = new ComparadorBusquedas();
 		IListaOrdenada lista = cancionesXnombre.buscarLista(pNombre, comparador);
-		
+
 		if(lista != null)
 		{
 			Cancion[] canciones = new Cancion[lista.darLongitud()];
-			
+
 			for(int i =0; i<canciones.length; i++)
 			{
 				Cancion c = (Cancion)lista.dar(i);
 				canciones[i] = c;
 			}
-			
+
 			return canciones;
 		}
 		return null;
@@ -255,7 +270,7 @@ public class ListaReproductor
 		buscarCancionesEnApi(resultado, pNombre, -1);
 		return resultado;
 	}
-	
+
 	/**
 	 * Devuelve una lista ordenada de canciones por artista
 	 * @param pArtista el artista de la cancion
@@ -266,7 +281,7 @@ public class ListaReproductor
 		ComparadorBusquedas comparador = new ComparadorBusquedas();
 		return cancionesXartista.buscarLista(pArtista, comparador);
 	}
-	
+
 	/**
 	 * Devuelve una cancion por id
 	 * @param pId la identificacion de la cancion
@@ -287,7 +302,7 @@ public class ListaReproductor
 
 	/**
 	 * Agrega canciones de un usuario a la lista de reproduccion grande
-	 * notifica a la interfaz para mostrar un mensaje de que han 
+	 * notifica a la interfaz para mostrar un mensaje de que han
 	 * sido añadidas las canciones
 	 * @param canciones
 	 * @param infoUsuario informacion del usuario
@@ -325,7 +340,7 @@ public class ListaReproductor
 	{
 		return cantidadConexionesPositivas;
 	}
-	
+
 	/**
 	 * Da la cantidad de canciones;
 	 */
@@ -333,7 +348,7 @@ public class ListaReproductor
 	{
 		return cant;
 	}
-	
+
 	public void pausar()
 	{
 		playing = false;
@@ -356,7 +371,7 @@ public class ListaReproductor
 			}
 		}
 	}
-	
+
 	/**
 	 * Reproduece la siguiente cancion en la cola
 	 */
@@ -385,7 +400,7 @@ public class ListaReproductor
 			}
 		}
 	}
-	
+
 	public void guardar() throws FileNotFoundException,  IOException, URISyntaxException
 	{
 		//URL url = Main.class.getResourceAsStream("res/canciones.properties");
@@ -414,18 +429,18 @@ public class ListaReproductor
 			cancionesXartista = new TablaHashing<String, Cancion>((int)(capacidad*.5));
 			cancionesXnombre = new TablaHashing<String, Cancion>(capacidad);
 			cancionesXid = new TablaHashing<String, Cancion>(capacidad);
-			
+
 			Iterator iter = rutasCanciones.keySet().iterator();
 			while(iter.hasNext())
 			{
 				String key = (String)iter.next();
-				
+
 				File archivo = new File(rutasCanciones.getProperty(key));
-				
+
 				extraerCanciones(archivo);
 			}
 		}
-		catch (FileNotFoundException e) 
+		catch (FileNotFoundException e)
 		{
 			throw new FileNotFoundException("No se cargaron correctamente las canciones: \n"+e.getMessage());
 		}
@@ -436,17 +451,17 @@ public class ListaReproductor
 		catch (SAXException e)
 		{
 			throw new SAXException("No se cargaron correctamente las canciones: \n"+e.getMessage());
-		} 
+		}
 		catch (TikaException e)
 		{
 			throw new TikaException("No se cargaron correctamente las canciones: \n"+e.getMessage());
-		} 
+		}
 	}
-	
+
 	//--------------------------------
 	//	Metodos Privados
 	//--------------------------------
-	
+
 	private String sacarPathCancion()
 	{
 		String path = "file://";
@@ -477,24 +492,24 @@ public class ListaReproductor
 		}
 		return path;
 	}
-	
+
 	private void extraerCanciones(File archivo) throws IOException, SAXException, TikaException
 	{
 		if(archivo.isDirectory())
-		{	
+		{
 			File[] canciones = archivo.listFiles();
-			
+
 			for(int i = 0; i<canciones.length; i++)
 			{
 				String extension = "";
 				int j = canciones[i].getPath().lastIndexOf('.');
-				if (j > 0) 
+				if (j > 0)
 				{
 				    extension = canciones[i].getPath().substring(j+1);
 				}
-				
-				if (canciones[i].isFile() && (extension.equals("mp3") || extension.equals("wav"))) 
-				{	
+
+				if (canciones[i].isFile() && (extension.equals("mp3") || extension.equals("wav")))
+				{
 					cargarCanciones(canciones[i], extension);
 				}
 			}
@@ -503,13 +518,13 @@ public class ListaReproductor
 		{
 			String extension = "";
 			int j = archivo.getPath().lastIndexOf('.');
-			if (j > 0) 
+			if (j > 0)
 			{
 			    extension = archivo.getPath().substring(j+1);
 			}
-			
-			if (archivo.isFile() && (extension.equals("mp3") || extension.equals("wav"))) 
-			{	
+
+			if (archivo.isFile() && (extension.equals("mp3") || extension.equals("wav")))
+			{
 				cargarCanciones(archivo, extension);
 			}
 		}
@@ -555,15 +570,15 @@ public class ListaReproductor
 					e.printStackTrace();
 				}
 			}
-		} 
-		catch (IOException e) 
+		}
+		catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	private void setOnMedia()
 	{
 		System.out.println("------------EndOfMedia----------");
@@ -587,7 +602,7 @@ public class ListaReproductor
 			mediaPlayer.play();
 		}
 	}
-	
+
 	private void cargarCanciones(File archivo, String extension) throws IOException, SAXException, TikaException
 	{
 		cant++;
@@ -644,7 +659,7 @@ public class ListaReproductor
 				cancionesXid.agregar(c.toString(), c);
 				System.out.println("Nombre: "+c.darNombre());
 			}
-			
+
 		}
 	}
 }

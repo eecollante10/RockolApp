@@ -1,3 +1,18 @@
+// RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+//     Copyright (C) 2016  Edgard Collante
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU Affero General Public License as published
+//     by the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU Affero General Public License for more details.
+//
+//     You should have received a copy of the GNU Affero General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package co.anarquianegra.rockolappServidor.mundo;
 
 import java.io.IOException;
@@ -17,47 +32,47 @@ import com.soundcloud.api.Request;
  * @author EdgardEduardo
  *
  */
-public class Cancion 
+public class Cancion
 {
 
 	//--------------------------------------
 	//Atributos
 	//--------------------------------------
-	
+
 	/**
 	 * Nombre de la cancion
 	 */
 	private String nombre;
-	
+
 	/**
 	 * Artista de la cancion
 	 */
 	private String artista;
-	
+
 	/**
 	 * Nombre del archivo de la cancion
 	 */
 	private String archivo;
-	
+
 	/**
 	 * Nombre del album de la cancion
 	 */
 	private String album;
-	
+
 	/**
 	 * La extension del archivo
 	 */
 	private String extension;
-	
+
 	/**
 	 * La id si la cancion es de soundcloud
 	 */
 	private long id;
-	
+
 	//-------------------------------------
 	//Constructores
 	//-------------------------------------
-	
+
 	/**
 	 * Constructor de la clase Cancion
 	 * @param pNombre
@@ -72,14 +87,14 @@ public class Cancion
 		archivo = pArchivo;
 		album = pAlbum;
 		id = -1;
-		
+
 		int j = archivo.lastIndexOf('.');
-		if (j > 0) 
+		if (j > 0)
 		{
 		    extension = archivo.substring(j+1);
 		}
 	}
-	
+
 	/**
 	 * Constructor de la clase Cancion
 	 * @param pNombre el nombre de la cancion
@@ -93,12 +108,12 @@ public class Cancion
 		archivo = pArchivo;
 		album = "Album Desconocido";
 		int j = archivo.lastIndexOf('.');
-		if (j > 0) 
+		if (j > 0)
 		{
 		    extension = archivo.substring(j+1);
 		}
 	}
-	
+
 	/**
 	 * Constructor de la clase Cancion
 	 * @param pNombre el nombre de la cancion
@@ -111,17 +126,17 @@ public class Cancion
 		artista = "Artista Desconocido";
 		album = "Album Desconocido";
 		int j = archivo.lastIndexOf('.');
-		if (j > 0) 
+		if (j > 0)
 		{
 		    extension = archivo.substring(j+1);
 		}
 	}
-	
-	
+
+
 	//-------------------------------------------
 	//Metodos
 	//-------------------------------------------
-	
+
 	/**
 	 * Devuelve el nombre de la cancion
 	 * @return nombre
@@ -130,7 +145,7 @@ public class Cancion
 	{
 		return nombre;
 	}
-	
+
 	/**
 	 * Devuelve el artista de la cancion
 	 * @return artista
@@ -139,7 +154,7 @@ public class Cancion
 	{
 		return artista;
 	}
-	
+
 	/**
 	 * Devuelve el nombre del archivo de la cancion
 	 * @return archivo
@@ -160,7 +175,7 @@ public class Cancion
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -168,7 +183,7 @@ public class Cancion
 		}
 		return archivo;
 	}
-	
+
 	/**
 	 * Devuelve el album en el que esta la cancion
 	 * @return album
@@ -177,7 +192,7 @@ public class Cancion
 	{
 		return album;
 	}
-	
+
 	/**
 	 * Devuelve la extension del archivo
 	 * @return extension
@@ -186,7 +201,7 @@ public class Cancion
 	{
 		return extension;
 	}
-	
+
 	/**
 	 * Pne la id si la cancion es de soundcloud
 	 * @param id
@@ -195,7 +210,7 @@ public class Cancion
 	{
 		id = pId;
 	}
-	
+
 	/**
 	 * Devuelve el nombre y el artista si tiene
 	 * @return <nombre> : <artista>

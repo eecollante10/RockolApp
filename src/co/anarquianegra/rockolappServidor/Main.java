@@ -1,3 +1,18 @@
+// RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+//     Copyright (C) 2016  Edgard Collante
+//
+//     This program is free software: you can redistribute it and/or modify
+//     it under the terms of the GNU Affero General Public License as published
+//     by the Free Software Foundation, either version 3 of the License, or
+//     (at your option) any later version.
+//
+//     This program is distributed in the hope that it will be useful,
+//     but WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//     GNU Affero General Public License for more details.
+//
+//     You should have received a copy of the GNU Affero General Public License
+//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package co.anarquianegra.rockolappServidor;
 
 import java.io.File;
@@ -45,17 +60,17 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 
-public class Main extends Application implements ListChangeListener<Cancion> 
+public class Main extends Application implements ListChangeListener<Cancion>
 {
 	//----------------------------
 	//Constantes
 	//----------------------------
-	
+
 	/**
 	 * Representa el numero de puero por donde recibir conexiones
 	 */
 	public final static int PUERTO = 10052;
-	
+
 	//----------------------------
 	//Atributos
 	//----------------------------
@@ -76,19 +91,19 @@ public class Main extends Application implements ListChangeListener<Cancion>
 	private ArrayList<Text> textos;
 	private boolean playing = false;
 	private Servidor servidor;
-	
+
 	//----------------------------
 	//Funciones
 	//----------------------------
-	
+
 	private void inicializarRockola(double w, double h)
 	{
 		rockola = new ImageView(new Image(Main.class.getResourceAsStream("res/Jukebox.png"))); //$NON-NLS-1$
 		rockola.setFitHeight(h-h/9);
 		rockola.setTranslateY(h/25);
 		rockola.setFitWidth(w);
-		
-		
+
+
 		rockola.setOnMouseDragged(new EventHandler<MouseEvent>() {
 			int i = 0;
 			double dx = w;
@@ -96,28 +111,28 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			double x = 0;
 			double y = 0;
 			boolean primero = true;
-			
+
 			public void handle(MouseEvent event) {
 				dx = event.getX() - x;
 				dy = event.getY() - y;
-				
+
 				if(Math.abs(dx) > Math.abs(dy) && !primero & i%5 == 0){
 					if(dx > 0)
 						stage.setX(stage.getX()+(w/15));
 					else
 						stage.setX(stage.getX()-(w/15));
 				}
-				
+
 				primero = false;
-				
+
 				x = event.getX();
 				y = event.getY();
 					i++;
 			};
 		});
-		
+
 	}
-	
+
 	private void inicializarQR(double w, double h)
 	{
 		qr = new ImageView(new Image(Main.class.getResourceAsStream("res/QR.png"))); //$NON-NLS-1$
@@ -125,9 +140,9 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		qr.setFitHeight(h/14);
 		qr.setX(w/2-h/28);
 		qr.setY(h/14);
-		
+
 		// Manejar Eventos De Ratón
-		
+
 		qr.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -146,7 +161,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			boolean abierta = false;
 			ImageView q ;
 			@Override
-			public void handle(Event event) {	
+			public void handle(Event event) {
 				if(!abierta)
 				{
 					//-------Boton QR-------
@@ -161,7 +176,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 						e.printStackTrace();
 					}
 					String sec = "http://api.qrserver.com/v1/create-qr-code/?data="+ip+"&size="+(h/4)+"x"+(h/4)+"&margin=20";
-					
+
 					if(q != null)
 						q.setImage(new Image(sec));
 					else
@@ -186,7 +201,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void inicializarSalir(double w, double h)
 	{
 		salir = new ImageView(new Image(Main.class.getResourceAsStream("res/Salir.png"))); //$NON-NLS-1$
@@ -194,9 +209,9 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		salir.setFitHeight(h/20);
 		salir.setX(w/2-rockola.getFitWidth()/4-h/20);
 		salir.setY(h/6);
-		
+
 		// Manejar Eventos De Ratón
-		
+
 		salir.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -230,7 +245,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void inicializarReprodcir(double w, double h)
 	{
 		reproducir = new ImageView(new Image(Main.class.getResourceAsStream("res/Reproducir.png"))); //$NON-NLS-1$
@@ -238,9 +253,9 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		reproducir.setFitWidth(h/10);
 		reproducir.setX(w/2-h/20);
 		reproducir.setY(h/2+h*2/11);
-		
+
 		// Manejar Eventos De Ratón
-		
+
 		reproducir.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -267,7 +282,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void inicializarPausar(double w, double h)
 	{
 		pausar = new ImageView(new Image(Main.class.getResourceAsStream("res/Pausar.png"))); //$NON-NLS-1$
@@ -275,9 +290,9 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		pausar.setFitWidth(h/12);
 		pausar.setX(w/2-rockola.getFitWidth()*2/11-h/24);
 		pausar.setY(h/2+h*2/9);
-		
+
 		// Manejar Eventos De Ratón
-		
+
 		pausar.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -305,7 +320,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void inicializarSiguente(double w, double h)
 	{
 		siguiente = new ImageView(new Image(Main.class.getResourceAsStream("res/Siguiente.png"))); //$NON-NLS-1$
@@ -313,9 +328,9 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		siguiente.setFitWidth(h/12);
 		siguiente.setX(w/2+rockola.getFitWidth()*2/11-h/24);
 		siguiente.setY(h/2+h*2/9);
-		
+
 		// Manejar Eventos De Ratón
-		
+
 		siguiente.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -339,7 +354,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void incicializarBuscar(double w, double h)
 	{
 		elegirCanciones = new ImageView(new Image(Main.class.getResourceAsStream("res/Buscar.png"))); //$NON-NLS-1$
@@ -347,7 +362,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		elegirCanciones.setFitHeight(h/20);
 		elegirCanciones.setX(w/2+rockola.getFitWidth()/4);
 		elegirCanciones.setY(h/6);
-		
+
 		elegirCanciones.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -425,7 +440,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 							}
 						};
 					});
-					
+
 					vbox.getChildren().add(sb);
 					root.getChildren().add(vbox);
 					mostrando = true;
@@ -440,7 +455,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void incicializarCarpeta(double w, double h)
 	{
 		carpeta = new ImageView(new Image(Main.class.getResourceAsStream("res/Carpeta.png"))); //$NON-NLS-1$
@@ -448,7 +463,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		carpeta.setFitHeight(h/18);
 		carpeta.setX(w/2-rockola.getFitWidth()/8-h/18);
 		carpeta.setY(h/10);
-		
+
 		carpeta.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -482,8 +497,8 @@ public class Main extends Application implements ListChangeListener<Cancion>
 					 {
 						 mundo.agregarCancion(selectedDirectory);
 						 System.out.println("Dir: "+selectedDirectory);
-					 } 
-					 catch (IOException | SAXException | TikaException e) 
+					 }
+					 catch (IOException | SAXException | TikaException e)
 					 {
 						 e.printStackTrace();
 					 }
@@ -491,7 +506,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void incicializarCancion(double w, double h)
 	{
 		cancion = new ImageView(new Image(Main.class.getResourceAsStream("res/Cancion.png"))); //$NON-NLS-1$
@@ -499,7 +514,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		cancion.setFitHeight(h/18);
 		cancion.setX(w/2+rockola.getFitWidth()/8);
 		cancion.setY(h/10);
-		
+
 		cancion.setOnMouseEntered(new EventHandler<Event>() {
 			@Override
 			public void handle(Event event) {
@@ -541,7 +556,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			}
 		});
 	}
-	
+
 	private void inicializarTextos(double w, double h)
 	{
 		reproduciendo = new Text("#1"); //$NON-NLS-1$
@@ -554,9 +569,9 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		Font font = Font.font(12);
 		reproduciendo.setFont(font);
 		reproduciendo.setFill(Color.WHEAT);
-		
+
 		textos = new ArrayList<Text>();
-		
+
 		for(int i = 0;i<5; i++)
 		{
 			Text t = new Text("#"+(i+2));
@@ -572,11 +587,11 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			textos.add(t);
 		}
 	}
-	
+
 	//----------------------------
 	//Inicialización
 	//----------------------------
-	
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -601,18 +616,18 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			incicializarCancion(w, h);
 			inicializarQR(w, h);
 			inicializarTextos(w, h);
-			
+
 			root.getChildren().addAll(rockola, salir, elegirCanciones, reproducir, pausar, siguiente, carpeta, cancion, reproduciendo, qr);
 			for(Text t : textos)
 			{
 				root.getChildren().add(t);
 			}
 			scene = new Scene(root,w,h);
-			scene.setFill(null);	
-			
+			scene.setFill(null);
+
 			primaryStage.setScene(scene);
 			primaryStage.show();
-		} 
+		}
 		catch(IOException e)
 		{
 			e.printStackTrace();
@@ -625,12 +640,12 @@ public class Main extends Application implements ListChangeListener<Cancion>
 		{
 			e.printStackTrace();
 		}
-		catch(Exception e) 
+		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -643,7 +658,7 @@ public class Main extends Application implements ListChangeListener<Cancion>
 			reproduciendo.setText(s.substring(0, s.length() > 43 ? 43 : s.length()));
 			System.out.println("Cambio lista");
 			for(int i = 0; i<5; i++)
-			{ 
+			{
 				if(i+1 < c.getList().size())
 				{
 					s = c.getList().get(i+1).darNombre();
