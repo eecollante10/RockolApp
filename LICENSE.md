@@ -630,7 +630,7 @@ to attach them to the start of each source file to most effectively
 state the exclusion of warranty; and each file should have at least
 the "copyright" line and a pointer to where the full notice is found.
 
-    RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app
+    RockolApp/JukeboxApp -Add songs to the playlist queue of the player from the mobile app  
     Copyright (C) 2016  Edgard Collante
 
     This program is free software: you can redistribute it and/or modify
